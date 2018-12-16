@@ -4,7 +4,7 @@
 1. Insert USB drive
 1. Write the image to the USB drive:
 ```
-# dd if=path-to-image of=/dev/sdX
+# dd if=path-to-image of=/dev/sdb # specify whole device, not partition
 ```
 
 # Install from the Bootable USB
