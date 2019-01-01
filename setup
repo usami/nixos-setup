@@ -2,8 +2,10 @@
 
 set -euo pipefail
 
-BOOT_PARTITION="$1" # e.g. /dev/sda3
-LUKS_PARTITION="$2"
+BOOT_PARTITION=$1 # e.g. /dev/sda3
+LUKS_PARTITION=$2
+EFI_MNT=/root/boot
+BOOT_MNT=/mnt/boot
 SALT_LENGTH=16
 KEY_LENGTH=512
 ITERATIONS=1000000
@@ -16,12 +18,9 @@ FSROOT=root
 SWAP_SIZE=16GiB
 
 setup_boot_partition() {
-        label="$1"
-        mount_point="$2"
-
-        mkfs.fat -F 32 -n "$label" "$BOOT_PARTITION"
-        mkdir -p "$mount_point"
-        mount /dev/disk/by-label/$label "$mount_point"
+        mkfs.vfat -F 32 -n uefi $BOOT_PARTITION
+        mkdir -p $EFI_MNT
+        mount $BOOT_PARTITION $EFI_MNT
 }
 
 rbtohex() {
@@ -33,8 +32,6 @@ hextorb() {
 }
 
 setup_crypt() {
-        boot_dir="$1"
-
         nix-env -i gcc-wrapper
         nix-env -i yubikey-personalization
         nix-env -i openssl
@@ -52,11 +49,11 @@ setup_crypt() {
 
         k_luks="$(echo | ./pbkdf2-sha512 $(($KEY_LENGTH / 8)) $ITERATIONS $response | rbtohex)"
 
-        echo -n "$k_luks" | hextorb | cryptsetup luksFormat --cipher="$CIPHER" --key-size="$KEY_LENGTH" --hash="$HASH" --key-file=- "$LUKS_PARTITION"
+        echo -n "$k_luks" | hextorb | cryptsetup luksFormat --cipher="$CIPHER" --key-size="$KEY_LENGTH" --hash="$HASH" --key-file=- $LUKS_PARTITION
 
         storage=/crypt-storage/default
-        mkdir -p "$(dirname $boot_dir$storage)"
-        echo -ne "$salt\n$ITERATIONS" > "$boot_dir$storage"
+        mkdir -p "$(dirname $EFI_MNT$storage)"
+        echo -ne "$salt\n$ITERATIONS" > $EFI_MNT$storage
         echo -n "$k_luks" | hextorb | cryptsetup luksOpen --key-file=- "$LUKS_PARTITION" "$LUKSROOT"
 }
 
@@ -74,10 +71,16 @@ setup_luks_partition() {
         mkswap -L swap "/dev/$VGNAME/swap"
 
         mount "/dev/$VGNAME/$FSROOT" /mnt
-        swapon "/dev/$VGNAME/swap"
 }
 
-boot_dir=/mnt/boot
-setup_boot_partition boot "$boot_dir"
-setup_crypt "$boot_dir"
+setup_boot_partition
+setup_crypt
 setup_luks_partition
+
+umount $EFI_MNT
+mkdir -p $BOOT_MNT
+mount $BOOT_PARTITION $BOOT_MNT
+
+swapon "/dev/$VGNAME/swap"
+
+nixos-generate-config --root /mnt

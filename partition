@@ -4,7 +4,7 @@ DEVICE=$1
 
 set -euo pipefail
 
-parted "$DEVICE" -- mklabel gpt
-parted "$DEVICE" -- mkpart ESP fat32 1MiB 512MiB
-parted "$DEVICE" -- mkpart primary 512MiB 100%
-parted "$DEVICE" -- set 1 boot on
+parted $DEVICE -- mklabel gpt
+parted $DEVICE -- mkpart ESP fat32 1MiB 512MiB
+parted $DEVICE -- mkpart primary 512MiB 100%
+parted $DEVICE -- set 1 boot on
