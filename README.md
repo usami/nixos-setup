@@ -8,16 +8,32 @@
 ```
 
 # Install from the Bootable USB
+1. Disable Secure Boot in BIOS
+1. Change Graphics to Discrete Graphics if using Hybrid Graphics (Config -> Display -> Graphics Device)
 1. Boot from the USB
 1. Insert ethernet cable
 1. Create partitions [ref](https://nixos.org/nixos/manual/index.html#sec-installation-partitioning-UEFI)
-1. Get setup script
-1. Run setup.sh:
 ```
-# ./setup.sh /dev/sdX[boot partition] /dev/sdX[luks partition]
+# nix-env -i wget
+# wget https://raw.githubusercontent.com/usami/nixos-setup/master/partition
+# chmod +x partition
+# ./partition /dev/nvme0n1
 ```
-1. Generate config:
+1. Setup crypted volume
 ```
-# nixos-generate-config --root /mnt
+# wget https://raw.githubusercontent.com/usami/nixos-setup/master/setup
+# chmod +x setup
+# ./setup /dev/nvme0n1p1 /dev/nvme0n1p2
 ```
-1. Setup keybase
+1. Get minimal setup configuration
+```
+# cd /mnt/etc/nixos
+# rm configuration.nix
+# wget https://raw.githubusercontent.com/usami/nixos-setup/master/configuration.nix
+```
+1. Remove filesystem entries in hardware.nix
+1. Install
+```
+# nixos-install
+```
+
