@@ -41,7 +41,7 @@
       options = [ "noatime" "nodiratime" "discard" ];
     };
     "/boot" = {
-      device = "/dev/disk/by-label/boot";
+      device = "/dev/nvme0n1p1";
       fsType = "vfat";
     };
   };
