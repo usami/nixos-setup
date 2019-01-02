@@ -32,8 +32,35 @@
 # wget https://raw.githubusercontent.com/usami/nixos-setup/master/configuration.nix
 ```
 1. Remove filesystem entries in hardware.nix
-1. Install
+1. Install and reboot
 ```
 # nixos-install
+# reboot
 ```
 
+# Setup keybase
+1. Login as user `yu` (initial password: `asdf`)
+1. Add new device
+```
+$ keybase login
+```
+
+# Setup
+1. Clone nixos config git
+```
+$ git clone keybase://private/yusmi/nixos
+```
+1. Clone dotconfig git
+```
+$ git clone keybase://private/yusmi/dotconfig
+```
+1. Create symbolic links
+```
+$ sudo rm -rf /etc/nixos
+$ sudo ln -s /home/yu/nixos /etc/nixos
+$ ln -s dotconfig .config
+```
+1. Rebuild
+```
+$ sudo nixos-rebuild switch
+```
