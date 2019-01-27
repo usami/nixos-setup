@@ -46,7 +46,7 @@
     };
   };
 
-  services.keybase.enable = true;
+  environment.systemPackages = with pkgs; [ git kbfs ];
 
   users.users.yu = {
     isNormalUser = true;
