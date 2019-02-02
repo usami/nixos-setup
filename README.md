@@ -19,13 +19,13 @@
 # chmod +x partition
 # ./partition /dev/nvme0n1
 ```
+1. Insert yubikey
 1. Setup crypted volume
 ```
 # wget https://raw.githubusercontent.com/usami/nixos-setup/master/setup
 # chmod +x setup
 # ./setup /dev/nvme0n1p1 /dev/nvme0n1p2
 ```
-1. Insert yubikey
 1. Get minimal setup configuration
 ```
 # cd /mnt/etc/nixos
