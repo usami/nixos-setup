@@ -48,6 +48,8 @@
 
   environment.systemPackages = with pkgs; [ git kbfs ];
 
+  services.keybase.enable = true;
+
   users.users.yu = {
     isNormalUser = true;
     uid = 1000;
