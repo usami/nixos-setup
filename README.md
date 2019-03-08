@@ -59,6 +59,7 @@ $ git clone keybase://private/yusmi/dotconfig
 ```
 $ sudo rm -rf /etc/nixos
 $ sudo ln -s /home/yu/nixos /etc/nixos
+$ rm -rf .config
 $ ln -s dotconfig .config
 ```
 1. Rebuild
