@@ -4,6 +4,7 @@ set -euo pipefail
 
 BOOT_PARTITION=$1 # e.g. /dev/sda3
 LUKS_PARTITION=$2
+SWAP_PARTITION=$3
 EFI_MNT=/root/boot
 BOOT_MNT=/mnt/boot
 SALT_LENGTH=16
@@ -13,14 +14,17 @@ CIPHER=aes-xts-plain64
 HASH=sha512
 SLOT=2
 LUKSROOT=crypted
-VGNAME=cryptedpool
 FSROOT=root
-SWAP_SIZE=16GiB
 
 setup_boot_partition() {
         mkfs.vfat -F 32 -n uefi $BOOT_PARTITION
         mkdir -p $EFI_MNT
         mount $BOOT_PARTITION $EFI_MNT
+}
+
+setup_swap_partition() {
+        mkswap -L swap $SWAP_PARTITION
+        swapon $SWAP_PARTITION
 }
 
 rbtohex() {
@@ -58,22 +62,21 @@ setup_crypt() {
 }
 
 setup_luks_partition() {
-        pvcreate "/dev/mapper/$LUKSROOT"
+        mkfs.btrfs -L "$FSROOT" "/dev/mapper/$LUKSROOT"
 
-        vgcreate "$VGNAME" "/dev/mapper/$LUKSROOT"
+        mount -t btrfs "/dev/mapper/$LUKSROOT" /mnt
+        btrfs subvol create /mnt/nixos
+        umount /mnt
 
-        lvcreate -L "$SWAP_SIZE" -n swap "$VGNAME"
-        lvcreate -l 100%FREE -n "$FSROOT" "$VGNAME"
-
-        vgchange -ay
-
-        mkfs.ext4 -L "$FSROOT" "/dev/$VGNAME/$FSROOT"
-        mkswap -L swap "/dev/$VGNAME/swap"
-
-        mount "/dev/$VGNAME/$FSROOT" /mnt
+        mount -t btrfs -o subvol=nixos "/dev/mapper/$LUKSROOT" /mnt
+        btrfs subvol create /mnt/var
+        btrfs subvol create /mnt/home
+        btrfs subvol create /mnt/tmp
+        chmod 777 /mnt/tmp
 }
 
 setup_boot_partition
+setup_swap_partition
 setup_crypt
 setup_luks_partition
 
@@ -81,6 +84,5 @@ umount $EFI_MNT
 mkdir -p $BOOT_MNT
 mount $BOOT_PARTITION $BOOT_MNT
 
-swapon "/dev/$VGNAME/swap"
 
 nixos-generate-config --root /mnt
