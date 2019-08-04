@@ -5,7 +5,7 @@ DEVICE=$1
 set -euo pipefail
 
 parted $DEVICE -- mklabel gpt
-parted $DEVICE -- mkpart ESP fat32 1MiB 512MiB
-parted $DEVICE -- mkpart primary 512MiB -8GiB
-parted $DEVICE -- mkpart primary linux-swap -8GiB 100%
+parted -a optimal $DEVICE -- mkpart ESP fat32 0% 512MiB
+parted -a optimal $DEVICE -- mkpart primary 512MiB 98%
+parted -a optimal $DEVICE -- mkpart primary linux-swap 98% 100%
 parted $DEVICE -- set 1 boot on
