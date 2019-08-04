@@ -71,8 +71,9 @@ setup_luks_partition() {
         mount -t btrfs -o subvol=nixos "/dev/mapper/$LUKSROOT" /mnt
         btrfs subvol create /mnt/var
         btrfs subvol create /mnt/home
-        btrfs subvol create /mnt/tmp
-        chmod 777 /mnt/tmp
+
+        mount -t btrfs -o subvol=var "/dev/mapper/$LUKSROOT" /mnt/var
+        mount -t btrfs -o subvol=home "/dev/mapper/$LUKSROOT" /mnt/home
 }
 
 setup_boot_partition
