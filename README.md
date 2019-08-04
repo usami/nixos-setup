@@ -57,6 +57,7 @@ $ git clone keybase://private/yusmi/dotconfig
 ```
 1. Create symbolic links
 ```
+$ cp /etc/nixos/hardware-configuration.nix /home/yu/nixos/
 $ sudo rm -rf /etc/nixos
 $ sudo ln -s /home/yu/nixos /etc/nixos
 $ rm -rf .config
