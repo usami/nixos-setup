@@ -17,7 +17,6 @@
         yubikeySupport = true;
         devices = {
           "crypted" = {
-            device = "/dev/nvme0n1p2";
             preLVM = true;
             yubikey = {
               twoFactor = false;
@@ -27,22 +26,6 @@
           };
         };
       };
-    };
-  };
-
-  swapDevices = [
-    { label = "swap"; }
-  ];
-
-  fileSystems = {
-    "/" = {
-      device = "/dev/disk/by-label/root";
-      fsType = "ext4";
-      options = [ "noatime" "nodiratime" "discard" ];
-    };
-    "/boot" = {
-      device = "/dev/nvme0n1p1";
-      fsType = "vfat";
     };
   };
 
