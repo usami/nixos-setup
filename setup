@@ -35,6 +35,17 @@ hextorb() {
         ( tr '[:lower:]' '[:upper:]' | sed -e 's/\([0-9A-F]\{2\}\)/\\\\\\x\1/gI' | xargs printf )
 }
 
+setup_yubikey() {
+        AES_SECRET_KEY=$1
+        while true; do
+                read -p "Insert yubikey then type y:" yn
+                case $yn in
+                        [Yy]* ) ykpersonalize -"$SLOT" -ochal-resp -ochal-hmac -a"$AES_SECRET_KEY"; break;;
+                        * ) echo "Please enter y when ready.";;
+                esac
+        done
+}
+
 setup_crypt() {
         nix-env -i gcc-wrapper
         nix-env -i yubikey-personalization
@@ -46,7 +57,11 @@ setup_crypt() {
         salt="$(dd if=/dev/random bs=1 count=$SALT_LENGTH 2>/dev/null | rbtohex)"
 
         k_yubi="$(dd if=/dev/random bs=1 count=20 2>/dev/null | rbtohex)"
-        ykpersonalize -"$SLOT" -ochal-resp -ochal-hmac -a"$k_yubi"
+
+        setup_yubikey $k_yubi
+
+        echo "Setup copy of yubikey"
+        setup_yubikey $k_yubi
 
         challenge="$(echo -n $salt | openssl dgst -binary -sha512 | rbtohex)"
         response="$(echo -n $challenge | hextorb | openssl dgst -binary -sha1 -mac HMAC -macopt hexkey:$k_yubi | rbtohex)"
