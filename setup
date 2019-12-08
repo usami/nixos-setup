@@ -60,9 +60,6 @@ setup_crypt() {
 
         setup_yubikey $k_yubi
 
-        echo "Setup copy of yubikey"
-        setup_yubikey $k_yubi
-
         challenge="$(echo -n $salt | openssl dgst -binary -sha512 | rbtohex)"
         response="$(echo -n $challenge | hextorb | openssl dgst -binary -sha1 -mac HMAC -macopt hexkey:$k_yubi | rbtohex)"
 
