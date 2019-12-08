@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 nix-env -i jq
 
 DEVICE=/dev/$(lsblk -J | jq -r '.blockdevices[0].name')
@@ -11,8 +13,8 @@ wget https://raw.githubusercontent.com/usami/nixos-setup/master/setup
 chmod +x partition
 chmod +x setup
 
-./partition $(DEVICE)
-./setup $(DEVICE)p1 $(DEVICE)p2 $(DEVICE)p3
+./partition $DEVICE
+./setup "$DEVICE"p1 "$DEVICE"p2 "$DEVICE"p3
 
 cd /mnt/etc/nixos
 rm configuration.nix
