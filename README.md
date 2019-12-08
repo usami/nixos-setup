@@ -12,8 +12,19 @@
 1. Change Graphics to Discrete Graphics if using Hybrid Graphics (Config -> Display -> Graphics Device)
 1. Boot from the USB
 1. Insert ethernet cable
+
+## Do everything in one script
+```
+$ sudo su root
+# nix-env -i wget
+# wget https://raw.githubusercontent.com/usami/nixos-setup/master/start
+# chmod +x start
+# ./start
+```
+
 1. Create partitions [ref](https://nixos.org/nixos/manual/index.html#sec-installation-partitioning-UEFI)
 ```
+$ sudo su root
 # nix-env -i wget
 # wget https://raw.githubusercontent.com/usami/nixos-setup/master/partition
 # chmod +x partition
