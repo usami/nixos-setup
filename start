@@ -4,7 +4,7 @@ set -euo pipefail
 
 nix-env -i jq
 
-DEVICE=/dev/$(lsblk -J | jq -r '.blockdevices[0].name')
+DEVICE=/dev/$(lsblk -J | jq -r '.blockdevices[] | .name' | grep nvme)
 
 echo "Fetch install scripts"
 wget https://raw.githubusercontent.com/usami/nixos-setup/master/partition
