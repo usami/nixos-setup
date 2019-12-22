@@ -35,17 +35,6 @@ hextorb() {
         ( tr '[:lower:]' '[:upper:]' | sed -e 's/\([0-9A-F]\{2\}\)/\\\\\\x\1/gI' | xargs printf )
 }
 
-setup_yubikey() {
-        AES_SECRET_KEY=$1
-        while true; do
-                read -p "Insert yubikey then type y:" yn
-                case $yn in
-                        [Yy]* ) ykpersonalize -"$SLOT" -ochal-resp -ochal-hmac -a"$AES_SECRET_KEY"; break;;
-                        * ) echo "Please enter y when ready.";;
-                esac
-        done
-}
-
 setup_crypt() {
         nix-env -i gcc-wrapper
         nix-env -i yubikey-personalization
@@ -58,7 +47,7 @@ setup_crypt() {
 
         k_yubi="$(dd if=/dev/random bs=1 count=20 2>/dev/null | rbtohex)"
 
-        setup_yubikey $k_yubi
+        ykpersonalize -"$SLOT" -ochal-resp -ochal-hmac -a"$k_yubi"
 
         challenge="$(echo -n $salt | openssl dgst -binary -sha512 | rbtohex)"
         response="$(echo -n $challenge | hextorb | openssl dgst -binary -sha1 -mac HMAC -macopt hexkey:$k_yubi | rbtohex)"
@@ -93,6 +82,5 @@ setup_luks_partition
 umount $EFI_MNT
 mkdir -p $BOOT_MNT
 mount $BOOT_PARTITION $BOOT_MNT
-
 
 nixos-generate-config --root /mnt
