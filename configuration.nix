@@ -29,6 +29,21 @@
     };
   };
 
+  fileSystems = pkgs.lib.mkForce {
+    "/boot" = {
+      device = "/dev/disk/by-label/uefi";
+      fsType = "vfat";
+    };
+
+    "/" = {
+      device = "/dev/disk/by-label/root";
+      fsType = "btrfs";
+      options = [ "subvol=nixos" "autodefrag" "compress=lzo" "ssd" "noatime" "space_cache" "discard" ];
+    };
+  };
+
+  swapDevices = pkgs.lib.mkForce [ { label = "swap"; } ];
+
   environment.systemPackages = with pkgs; [ git kbfs ];
 
   services.keybase.enable = true;

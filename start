@@ -20,10 +20,5 @@ cd /mnt/etc/nixos
 rm configuration.nix
 wget https://raw.githubusercontent.com/usami/nixos-setup/master/configuration.nix
 
-echo "Remove filesystem entries in hardware.nix"
-sleep 5
-
-vi hardware.nix
-
 nixos-install
 reboot

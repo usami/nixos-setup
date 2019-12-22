@@ -43,7 +43,6 @@ $ sudo su root
 # rm configuration.nix
 # wget https://raw.githubusercontent.com/usami/nixos-setup/master/configuration.nix
 ```
-1. Remove filesystem entries in hardware.nix
 1. Install and reboot
 ```
 # nixos-install
