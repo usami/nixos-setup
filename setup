@@ -62,22 +62,24 @@ setup_crypt() {
         echo -n "$k_luks" | hextorb | cryptsetup luksOpen --key-file=- "$LUKS_PARTITION" "$LUKSROOT"
 }
 
-setup_luks_partition() {
-        mkfs.btrfs -L "$FSROOT" "/dev/mapper/$LUKSROOT"
+setup_btrfs() {
+        mkdir /mnt-root
+        touch /mnt-root/nix-store.squashfs
 
-        mount -t btrfs "/dev/mapper/$LUKSROOT" /mnt
+        mkfs.btrfs -L "$FSROOT" "/dev/partitions/$FSROOT"
+
+        mount -t btrfs "/dev/partitions/$FSROOT" /mnt
+
         btrfs subvol create /mnt/nixos
-        umount /mnt
 
-        mount -t btrfs -o subvol=nixos "/dev/mapper/$LUKSROOT" /mnt
-        btrfs subvol create /mnt/var
-        btrfs subvol create /mnt/home
+        umount /mnt
+        mount -t btrfs -o subvol=nixos "/dev/partitions/$FSROOT" /mnt
 }
 
 setup_boot_partition
 setup_swap_partition
 setup_crypt
-setup_luks_partition
+setup_btrfs
 
 umount $EFI_MNT
 mkdir -p $BOOT_MNT
