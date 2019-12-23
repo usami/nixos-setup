@@ -21,4 +21,4 @@ rm configuration.nix
 wget https://raw.githubusercontent.com/usami/nixos-setup/master/configuration.nix
 
 nixos-install --no-root-passwd
-# reboot
+reboot

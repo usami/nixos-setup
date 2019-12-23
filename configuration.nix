@@ -10,6 +10,7 @@
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
     };
+    supportedFilesystems = [ "btrfs" ];
     initrd = {
       kernelModules = [ "vfat" "nls_cp437" "nls_iso8859-1" "usbhid" ];
       luks = {
@@ -28,21 +29,6 @@
       };
     };
   };
-
-  fileSystems = pkgs.lib.mkForce {
-    "/boot" = {
-      device = "/dev/disk/by-label/uefi";
-      fsType = "vfat";
-    };
-
-    "/" = {
-      device = "/dev/disk/by-label/root";
-      fsType = "btrfs";
-      options = [ "subvol=nixos" "autodefrag" "compress=lzo" "ssd" "noatime" "space_cache" "discard" ];
-    };
-  };
-
-  swapDevices = pkgs.lib.mkForce [ { label = "swap"; } ];
 
   environment.systemPackages = with pkgs; [ git kbfs ];
 
