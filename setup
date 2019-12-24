@@ -45,12 +45,10 @@ setup_crypt() {
 
         salt="$(dd if=/dev/random bs=1 count=$SALT_LENGTH 2>/dev/null | rbtohex)"
 
-        k_yubi="$(dd if=/dev/random bs=1 count=20 2>/dev/null | rbtohex)"
-
-        ykpersonalize -"$SLOT" -ochal-resp -ochal-hmac -a"$k_yubi"
+        ykpersonalize -"$SLOT" -ochal-resp -ochal-hmac
 
         challenge="$(echo -n $salt | openssl dgst -binary -sha512 | rbtohex)"
-        response="$(echo -n $challenge | hextorb | openssl dgst -binary -sha1 -mac HMAC -macopt hexkey:$k_yubi | rbtohex)"
+        response="$(ykchalresp -2 -x $challenge 2>/dev/null)"
 
         k_luks="$(echo | ./pbkdf2-sha512 $(($KEY_LENGTH / 8)) $ITERATIONS $response | rbtohex)"
 
@@ -63,14 +61,14 @@ setup_crypt() {
 }
 
 setup_btrfs() {
-        mkfs.btrfs -L $FSROOT $LUKS_PARTITION
+        mkfs.btrfs -L $FSROOT "/dev/mapper/$LUKSROOT"
 
-        mount -t btrfs $LUKS_PARTITION /mnt
+        mount -t btrfs "/dev/mapper/$LUKSROOT" /mnt
 
         btrfs subvol create /mnt/nixos
 
         umount /mnt
-        mount -t btrfs -o subvol=nixos $LUKS_PARTITION /mnt
+        mount -t btrfs -o subvol=nixos "/dev/mapper/$LUKSROOT" /mnt
 }
 
 setup_boot_partition
