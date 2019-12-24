@@ -45,7 +45,7 @@ setup_crypt() {
 
         salt="$(dd if=/dev/random bs=1 count=$SALT_LENGTH 2>/dev/null | rbtohex)"
 
-        ykpersonalize -"$SLOT" -ochal-resp -ochal-hmac
+        ykpersonalize -"$SLOT" -ochal-resp -ochal-hmac -ohmac-lt64 -oserial-api-visible
 
         challenge="$(echo -n $salt | openssl dgst -binary -sha512 | rbtohex)"
         response="$(ykchalresp -2 -x $challenge 2>/dev/null)"

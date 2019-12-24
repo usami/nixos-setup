@@ -10,7 +10,6 @@
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
     };
-    supportedFilesystems = [ "btrfs" ];
     initrd = {
       kernelModules = [ "vfat" "nls_cp437" "nls_iso8859-1" "usbhid" ];
       luks = {
@@ -18,12 +17,19 @@
         yubikeySupport = true;
         devices = {
           "crypted" = {
+            device = "/dev/nvme0n1p1";
             preLVM = true;
             yubikey = {
               slot = 2;
               twoFactor = false;
               gracePeriod = 60;
-              storage.device = "/dev/disk/by-label/uefi";
+              keyLength = 64;
+              saltLength = 16;
+              storage = {
+                device = "/dev/nvme0n1p3";
+                fsType = "vfat";
+                path = "/crypt-storage/default";
+              };
             };
           };
         };
