@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
 DEVICE=$1
+SWAP_SIZE_GIB=$2
 
 set -euo pipefail
 
 parted $DEVICE -- mklabel gpt
-parted -a optimal $DEVICE -- mkpart ESP fat32 0% 512MiB
-parted -a optimal $DEVICE -- mkpart primary 512MiB 98%
-parted -a optimal $DEVICE -- mkpart primary linux-swap 98% 100%
-parted $DEVICE -- set 1 boot on
+parted -a optimal $DEVICE -- mkpart primary 512MiB -"$SWAP_SIZE_GIB"GiB
+parted -a optimal $DEVICE -- mkpart primary linux-swap -"$SWAP_SIZE_GIB"GiB 100%
+parted -a optimal $DEVICE -- mkpart ESP fat32 1MiB 512MiB
+parted $DEVICE -- set 3 boot on

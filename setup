@@ -14,7 +14,6 @@ CIPHER=aes-xts-plain64
 HASH=sha512
 SLOT=2
 LUKSROOT=crypted
-VGNAME=partitions
 FSROOT=root
 
 setup_boot_partition() {
@@ -61,26 +60,17 @@ setup_crypt() {
         mkdir -p "$(dirname $EFI_MNT$storage)"
         echo -ne "$salt\n$ITERATIONS" > $EFI_MNT$storage
         echo -n "$k_luks" | hextorb | cryptsetup luksOpen --key-file=- "$LUKS_PARTITION" "$LUKSROOT"
-
-        pvcreate "/dev/mapper/$LUKSROOT"
-        vgcreate "$VGNAME" "/dev/mapper/$LUKSROOT"
-
-        lvcreate -l 100%FREE -n "$FSROOT" "$VGNAME"
-        vgchange -ay
 }
 
 setup_btrfs() {
-        mkdir /mnt-root
-        touch /mnt-root/nix-store.squashfs
+        mkfs.btrfs -L $FSROOT $LUKS_PARTITION
 
-        mkfs.btrfs -L "$FSROOT" "/dev/$VGNAME/$FSROOT"
-
-        mount -t btrfs "/dev/$VGNAME/$FSROOT" /mnt
+        mount -t btrfs $LUKS_PARTITION /mnt
 
         btrfs subvol create /mnt/nixos
 
         umount /mnt
-        mount -t btrfs -o subvol=nixos "/dev/$VGNAME/$FSROOT" /mnt
+        mount -t btrfs -o subvol=nixos $LUKS_PARTITION /mnt
 }
 
 setup_boot_partition

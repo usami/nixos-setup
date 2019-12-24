@@ -20,9 +20,10 @@
           "crypted" = {
             preLVM = true;
             yubikey = {
+              slot = 2;
               twoFactor = false;
               gracePeriod = 60;
-              storage.device = "/dev/nvme0n1p1";
+              storage.device = "/dev/disk/by-label/uefi";
             };
           };
         };
