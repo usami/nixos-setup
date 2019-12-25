@@ -5,10 +5,11 @@ set -euo pipefail
 nix-env -i jq
 
 DEVICE=/dev/$(lsblk -J | jq -r '.blockdevices[] | .name' | grep nvme)
+BRANCH=clean
 
 echo "Fetch install scripts"
-wget https://raw.githubusercontent.com/usami/nixos-setup/master/partition
-wget https://raw.githubusercontent.com/usami/nixos-setup/master/setup
+curl -o partition https://raw.githubusercontent.com/usami/nixos-setup/$BRANCH/partition
+curl -o setup https://raw.githubusercontent.com/usami/nixos-setup/$BRANCH/setup
 
 chmod +x partition
 chmod +x setup
@@ -18,7 +19,7 @@ chmod +x setup
 
 cd /mnt/etc/nixos
 rm configuration.nix
-wget https://raw.githubusercontent.com/usami/nixos-setup/master/configuration.nix
+curl -o configuration.nix https://raw.githubusercontent.com/usami/nixos-setup/$BRANCH/configuration.nix
 
 vim hardware-configuration.nix
 
