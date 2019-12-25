@@ -6,35 +6,34 @@
   ];
 
   boot = {
-    loader = {
-      systemd-boot.enable = true;
-      efi.canTouchEfiVariables = true;
-    };
     initrd = {
       kernelModules = [ "vfat" "nls_cp437" "nls_iso8859-1" "usbhid" ];
       luks = {
         cryptoModules = [ "aes" "xts" "sha512" ];
         yubikeySupport = true;
-        devices = {
-          "crypted" = {
-            device = "/dev/nvme0n1p1";
-            preLVM = true;
-            yubikey = {
-              slot = 2;
-              twoFactor = false;
-              gracePeriod = 60;
-              keyLength = 64;
-              saltLength = 16;
-              storage = {
-                device = "/dev/nvme0n1p3";
-                fsType = "vfat";
-                path = "/crypt-storage/default";
-              };
+        devices = [ {
+          name = "crypted";
+          device = "/dev/nvme0n1p1";
+          preLVM = true;
+          yubikey = {
+            slot = 2;
+            twoFactor = false;
+            storage = {
+              device = "/dev/nvme0n1p3";
             };
           };
-        };
+        } ];
       };
     };
+  };
+
+  swapDevices = [ { device = "/dev/nvme0n1p2"; } ];
+
+  fileSystems."/" = {
+    label = "root";
+    device = "/dev/mapper/crypted";
+    fsType = "btrfs";
+    options = "subvol=nixos";
   };
 
   environment.systemPackages = with pkgs; [ git kbfs ];

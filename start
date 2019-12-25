@@ -13,12 +13,19 @@ wget https://raw.githubusercontent.com/usami/nixos-setup/master/setup
 chmod +x partition
 chmod +x setup
 
-./partition $DEVICE
-./setup "$DEVICE"p1 "$DEVICE"p2 "$DEVICE"p3
+./partition $DEVICE 38
+./setup "$DEVICE"p3 "$DEVICE"p1 "$DEVICE"p2
 
 cd /mnt/etc/nixos
 rm configuration.nix
 wget https://raw.githubusercontent.com/usami/nixos-setup/master/configuration.nix
 
+vim hardware-configuration.nix
+
 nixos-install --no-root-passwd
+
+umount /mnt/{boot,}
+swapoff /dev/disk/by-label/swap
+cryptsetup luksClose crypted
+
 reboot

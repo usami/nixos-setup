@@ -39,20 +39,23 @@ setup_crypt() {
         nix-env -i gcc-wrapper
         nix-env -i yubikey-personalization
         nix-env -i openssl
-        cc -O3 -I$(find / | grep "openssl/evp\.h" | head -1 | sed -e 's|/openssl/evp\.h$||g' | tr -d '\n') \
-                -L$(find / | grep "lib/libcrypto" | head -1 | sed -e 's|/libcrypto\..*$||g' | tr -d '\n') \
-                $(find / | grep "pbkdf2-sha512\.c" | head -1 | tr -d '\n') -o ./pbkdf2-sha512 -lcrypto
-
-        salt="$(dd if=/dev/random bs=1 count=$SALT_LENGTH 2>/dev/null | rbtohex)"
+        cc -O3 \
+                -I$(nix-build "<nixpkgs>" --no-build-output -A openssl.dev)/include \
+                -L$(nix-build "<nixpkgs>" --no-build-output -A openssl.out)/lib \
+                $(nix eval "(with import <nixpkgs> {}; pkgs.path)")/nixos/modules/system/boot/pbkdf2-sha512.c \
+                -o ./pbkdf2-sha512 -lcrypto
 
         ykpersonalize -"$SLOT" -ochal-resp -ochal-hmac -ohmac-lt64 -oserial-api-visible
+
+        salt="$(dd if=/dev/random bs=1 count=$SALT_LENGTH 2>/dev/null | rbtohex)"
 
         challenge="$(echo -n $salt | openssl dgst -binary -sha512 | rbtohex)"
         response="$(ykchalresp -2 -x $challenge 2>/dev/null)"
 
-        k_luks="$(echo | ./pbkdf2-sha512 $(($KEY_LENGTH / 8)) $ITERATIONS $response | rbtohex)"
+        k_luks="$(echo | pbkdf2-sha512 $(($KEY_LENGTH / 8)) $ITERATIONS $response | rbtohex)"
 
-        echo -n "$k_luks" | hextorb | cryptsetup luksFormat --cipher="$CIPHER" --key-size="$KEY_LENGTH" --hash="$HASH" --key-file=- $LUKS_PARTITION
+        echo -n "$k_luks" | hextorb | cryptsetup luksFormat --cipher="$CIPHER" \
+                --key-size="$KEY_LENGTH" --hash="$HASH" --key-file=- "$LUKS_PARTITION"
 
         storage=/crypt-storage/default
         mkdir -p "$(dirname $EFI_MNT$storage)"
@@ -61,7 +64,7 @@ setup_crypt() {
 }
 
 setup_btrfs() {
-        mkfs.btrfs -L $FSROOT "/dev/mapper/$LUKSROOT"
+        mkfs.btrfs -L "$FSROOT" "/dev/mapper/$LUKSROOT"
 
         mount -t btrfs "/dev/mapper/$LUKSROOT" /mnt
 
