@@ -35,7 +35,13 @@
     label = "root";
     device = "/dev/mapper/crypted";
     fsType = "btrfs";
-    options = "subvol=nixos";
+    options = [ "subvol=nixos" ];
+  };
+
+  fileSystems."/boot" = {
+    label = "uefi";
+    device = "/dev/nvme0n1p3";
+    fsType = "vfat";
   };
 
   environment.systemPackages = with pkgs; [ git kbfs ];

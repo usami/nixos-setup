@@ -25,6 +25,7 @@ vim hardware-configuration.nix
 
 nixos-install --no-root-passwd
 
+cd
 umount /mnt/{boot,}
 swapoff /dev/disk/by-label/swap
 cryptsetup luksClose crypted
