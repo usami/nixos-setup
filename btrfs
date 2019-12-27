@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+DEVICE=$1
+BOOT_MNT=/mnt/boot
+ROOT_MNT=/mnt
+ROOT_PARTITION="$DEVICE"p1
+SWAP_PARTITION="$DEVICE"p2
+BOOT_PARTITION="$DEVICE"p3
+
+mkfs.vfat -F 32 -n uefi $BOOT_PARTITION
+mkdir -p $BOOT_MNT
+mount $BOOT_PARTITION $BOOT_MNT
+
+mkfs.btrfs -L root $ROOT_PARTITION
+
+mount -t btrfs $ROOT_PARTITION $ROOT_MNT
+
+btrfs subvol create "$ROOT_MNT"/nixos
+
+umount $ROOT_MNT
+mount -t btrfs -o subvol=nixos $ROOT_PARTITION $ROOT_MNT
+
+mkswap -L swap $SWAP_PARTITION
+swapon $SWAP_PARTITION

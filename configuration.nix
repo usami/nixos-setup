@@ -5,37 +5,9 @@
     ./hardware-configuration.nix
   ];
 
-  boot = {
-    loader = {
-      systemd-boot.enable = true;
-      efi.canTouchEfiVariables = true;
-    };
-    initrd = {
-      kernelModules = [ "vfat" "nls_cp437" "nls_iso8859-1" "usbhid" ];
-      luks = {
-        cryptoModules = [ "aes" "xts" "sha512" ];
-        yubikeySupport = true;
-        devices = {
-          "crypted" = {
-            device = "/dev/nvme0n1p1";
-            preLVM = true;
-            yubikey = {
-              slot = 2;
-              twoFactor = false;
-              gracePeriod = 60;
-              keyLength = 64;
-              saltLength = 16;
-              storage = {
-                device = "/dev/nvme0n1p3";
-                fsType = "vfat";
-                path = "/crypt-storage/default";
-              };
-            };
-          };
-        };
-      };
-    };
-  };
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+  boot.initrd.kernelModules = [ "vfat" ];
 
   environment.systemPackages = with pkgs; [ git kbfs ];
 
