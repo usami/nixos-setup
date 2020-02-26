@@ -6,7 +6,7 @@
   ];
 
   boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.efi.canTouchEfiVariables = false;
   boot.initrd.kernelModules = [ "vfat" ];
 
   environment.systemPackages = with pkgs; [ git kbfs ];
