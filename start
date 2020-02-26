@@ -15,7 +15,7 @@ chmod +x partition
 chmod +x setup
 chmod +x btrfs
 
-./partition "$DEVICE"
+./partition "$DEVICE" 47
 # ./setup "$DEVICE"p1 "$DEVICE"p2 "$DEVICE"p3
 ./btrfs "$DEVICE"
 
