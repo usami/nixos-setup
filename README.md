@@ -16,8 +16,7 @@
 ## Do everything in one script
 ```
 $ sudo su root
-# nix-env -i wget
-# wget https://raw.githubusercontent.com/usami/nixos-setup/master/start
+# curl -o start https://raw.githubusercontent.com/usami/nixos-setup/master/start
 # chmod +x start
 # ./start
 ```
@@ -25,15 +24,14 @@ $ sudo su root
 1. Create partitions [ref](https://nixos.org/nixos/manual/index.html#sec-installation-partitioning-UEFI)
 ```
 $ sudo su root
-# nix-env -i wget
-# wget https://raw.githubusercontent.com/usami/nixos-setup/master/partition
+# curl -o partition https://raw.githubusercontent.com/usami/nixos-setup/master/partition
 # chmod +x partition
 # ./partition /dev/nvme0n1
 ```
 1. Insert yubikey
 1. Setup crypted volume
 ```
-# wget https://raw.githubusercontent.com/usami/nixos-setup/master/setup
+# curl -o setup https://raw.githubusercontent.com/usami/nixos-setup/master/setup
 # chmod +x setup
 # ./setup /dev/nvme0n1p1 /dev/nvme0n1p2 /dev/nvme0n1p3
 ```
@@ -41,7 +39,7 @@ $ sudo su root
 ```
 # cd /mnt/etc/nixos
 # rm configuration.nix
-# wget https://raw.githubusercontent.com/usami/nixos-setup/master/configuration.nix
+# curl -o configuration.nix https://raw.githubusercontent.com/usami/nixos-setup/master/configuration.nix
 ```
 1. Install and reboot
 ```

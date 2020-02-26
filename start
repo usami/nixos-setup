@@ -7,11 +7,13 @@ nix-env -i jq
 DEVICE=/dev/$(lsblk -J | jq -r '.blockdevices[] | .name' | grep nvme)
 
 echo "Fetch install scripts"
-wget https://raw.githubusercontent.com/usami/nixos-setup/master/partition
-wget https://raw.githubusercontent.com/usami/nixos-setup/master/setup
+curl -o partition https://raw.githubusercontent.com/usami/nixos-setup/master/partition
+curl -o setup https://raw.githubusercontent.com/usami/nixos-setup/master/setup
+curl -o btrfs https://raw.githubusercontent.com/usami/nixos-setup/master/btrfs
 
 chmod +x partition
 chmod +x setup
+chmod +x btrfs
 
 ./partition "$DEVICE"
 # ./setup "$DEVICE"p1 "$DEVICE"p2 "$DEVICE"p3
@@ -19,7 +21,7 @@ chmod +x setup
 
 cd /mnt/etc/nixos
 rm configuration.nix
-wget https://raw.githubusercontent.com/usami/nixos-setup/master/configuration.nix
+curl -o configuration.nix https://raw.githubusercontent.com/usami/nixos-setup/master/configuration.nix
 
 nixos-install --no-root-passwd
 reboot
