@@ -1,6 +1,27 @@
 { config, pkgs, ... }:
 
-{
+let
+finish-setup = pkgs.writeScriptBin "finish-setup" ''
+  #!${pkgs.stdenv.shell}
+
+  set -eufx -o pipefail
+
+  keybase login --devicename="ThinkPad X1 $(uuidgen | cut -d '-' -f 1)"
+
+  git clone keybase://private/yusmi/nixos
+  git clone keybase://private/yusmi/dotconfig
+
+  cp /etc/nixos/hardware-configuration.nix /home/yu/nixos
+  sudo rm -rf /etc/nixos
+  sudo ln -s /home/yu/nixos /etc/nixos
+  rm -rf .config
+  ln -s dotconfig .config
+
+  sudo nixos-rebuild switch
+  reboot
+'';
+
+in {
   imports = [
     ./hardware-configuration.nix
   ];
@@ -10,7 +31,7 @@
   boot.initrd.kernelModules = [ "vfat" ];
   boot.earlyVconsoleSetup = true;
 
-  environment.systemPackages = with pkgs; [ git kbfs ];
+  environment.systemPackages = with pkgs; [ git kbfs finish-setup ];
 
   services.keybase.enable = true;
 

@@ -5,8 +5,6 @@ set -eufx -o pipefail
 DEVICE=$1
 SWAP_SIZE_GIB=$2
 
-set -euo pipefail
-
 wipefs -a $DEVICE
 parted $DEVICE -- mklabel gpt
 parted -a optimal $DEVICE -- mkpart primary 512MiB -"$SWAP_SIZE_GIB"GiB
