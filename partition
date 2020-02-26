@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -eufx -o pipefail
+
 DEVICE=$1
 SWAP_SIZE_GIB=$2
 

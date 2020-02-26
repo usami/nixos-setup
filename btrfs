@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -eufx -o pipefail
 
 DEVICE=$1
 BOOT_MNT=/mnt/boot
@@ -24,3 +24,5 @@ mount -t btrfs -o subvol=nixos $ROOT_PARTITION $ROOT_MNT
 
 mkswap -L swap $SWAP_PARTITION
 swapon $SWAP_PARTITION
+
+nixos-generate-config --root /mnt

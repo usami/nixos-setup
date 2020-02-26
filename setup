@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -eufx -o pipefail
 
 BOOT_PARTITION=$1 # e.g. /dev/sda3
 LUKS_PARTITION=$2
