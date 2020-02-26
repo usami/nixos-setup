@@ -13,7 +13,7 @@ mkfs.vfat -F 32 -n uefi $BOOT_PARTITION
 mkdir -p $BOOT_MNT
 mount $BOOT_PARTITION $BOOT_MNT
 
-mkfs.btrfs -L root $ROOT_PARTITION
+mkfs.btrfs -f -L root $ROOT_PARTITION
 
 mount -t btrfs $ROOT_PARTITION $ROOT_MNT
 
