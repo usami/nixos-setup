@@ -10,18 +10,14 @@ echo "Fetch install scripts"
 curl -o partition https://raw.githubusercontent.com/usami/nixos-setup/master/partition
 curl -o setup https://raw.githubusercontent.com/usami/nixos-setup/master/setup
 curl -o btrfs https://raw.githubusercontent.com/usami/nixos-setup/master/btrfs
+curl -o install https://raw.githubusercontent.com/usami/nixos-setup/master/install
 
 chmod +x partition
 chmod +x setup
 chmod +x btrfs
+chmod +x install
 
 ./partition "$DEVICE" 47
 # ./setup "$DEVICE"p1 "$DEVICE"p2 "$DEVICE"p3
 ./btrfs "$DEVICE"
-
-cd /mnt/etc/nixos
-rm configuration.nix
-curl -o configuration.nix https://raw.githubusercontent.com/usami/nixos-setup/master/configuration.nix
-
-nixos-install --no-root-passwd
-reboot
+./install
