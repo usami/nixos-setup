@@ -8,10 +8,14 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = false;
   boot.initrd.kernelModules = [ "vfat" ];
+  boot.earlyVconsoleSetup = true;
 
   environment.systemPackages = with pkgs; [ git kbfs ];
 
   services.keybase.enable = true;
+
+  i18n.consoleFont = "ter-i32b";
+  i18n.consolePackages = with pkgs; [ terminus_font ];
 
   users.users.yu = {
     isNormalUser = true;
