@@ -3,6 +3,7 @@
 set -eufx -o pipefail
 
 DEVICE=$1
+EFI_MNT=/root/boot
 BOOT_MNT=/mnt/boot
 ROOT_MNT=/mnt
 ROOT_PARTITION="$DEVICE"p1
@@ -10,8 +11,8 @@ SWAP_PARTITION="$DEVICE"p2
 BOOT_PARTITION="$DEVICE"p3
 
 mkfs.vfat -F 32 -n uefi $BOOT_PARTITION
-mkdir -p $BOOT_MNT
-mount $BOOT_PARTITION $BOOT_MNT
+mkdir -p $EFI_MNT
+mount $BOOT_PARTITION $EFI_MNT
 
 mkfs.btrfs -f -L root $ROOT_PARTITION
 
@@ -24,5 +25,9 @@ mount -t btrfs -o subvol=nixos $ROOT_PARTITION $ROOT_MNT
 
 mkswap -L swap $SWAP_PARTITION
 swapon $SWAP_PARTITION
+
+umount $EFI_MNT
+mkdir -p $BOOT_MNT
+mount $BOOT_PARTITION $BOOT_MNT
 
 nixos-generate-config --root /mnt
