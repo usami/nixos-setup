@@ -6,7 +6,7 @@ finish-setup = pkgs.writeScriptBin "finish-setup" ''
 
   set -eufx -o pipefail
 
-  keybase login --devicename="ThinkPad X1 $(uuidgen | cut -d '-' -f 1)"
+  keybase login --devicename="setup $(uuidgen | cut -d '-' -f 1)"
 
   git clone keybase://private/yusmi/nixos
   git clone keybase://private/yusmi/dotconfig
