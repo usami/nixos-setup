@@ -27,7 +27,7 @@ in {
   ];
 
   boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = false;
+  boot.loader.efi.canTouchEfiVariables = true;
   boot.initrd.kernelModules = [ "vfat" ];
   boot.earlyVconsoleSetup = true;
 
