@@ -7,7 +7,7 @@ SWAP_SIZE_GIB=$2
 
 wipefs -a $DEVICE
 parted $DEVICE -- mklabel gpt
-parted -a optimal $DEVICE -- mkpart primary 512MiB -"$SWAP_SIZE_GIB"GiB
-parted -a optimal $DEVICE -- mkpart primary linux-swap -"$SWAP_SIZE_GIB"GiB 100%
-parted -a optimal $DEVICE -- mkpart ESP fat32 1MiB 512MiB
+parted -s -a optimal $DEVICE -- mkpart primary 512MiB -"$SWAP_SIZE_GIB"GiB
+parted -s -a optimal $DEVICE -- mkpart primary linux-swap -"$SWAP_SIZE_GIB"GiB 100%
+parted -s -a optimal $DEVICE -- mkpart ESP fat32 1MiB 512MiB
 parted $DEVICE -- set 3 boot on
