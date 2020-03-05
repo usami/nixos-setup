@@ -10,7 +10,6 @@ finish-setup = pkgs.writeScriptBin "finish-setup" ''
 
   git clone keybase://private/yusmi/nixos
   git clone keybase://private/yusmi/dotconfig
-  git clone keybase://private/yusmi/wallpapers
 
   cp /etc/nixos/hardware-configuration.nix /home/yu/nixos
   sudo rm -rf /etc/nixos
