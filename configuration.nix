@@ -34,6 +34,7 @@ in {
   environment.systemPackages = with pkgs; [ git kbfs finish-setup ];
 
   services.keybase.enable = true;
+  programs.ssh.startAgent = true;
 
   i18n.consoleFont = "ter-i32b";
   i18n.consolePackages = with pkgs; [ terminus_font ];
