@@ -2,9 +2,7 @@
 
 set -eufx -o pipefail
 
-nix-env -i jq
-
-DEVICE=/dev/$(lsblk -J | jq -r '.blockdevices[] | .name' | grep nvme)
+DEVICE=/dev/$(lsblk -l -o name | head -n 2 | tail -n 1)
 
 echo "Fetch install scripts"
 curl -o partition https://raw.githubusercontent.com/usami/nixos-setup/master/partition
