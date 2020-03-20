@@ -2,7 +2,8 @@
 
 set -eufx -o pipefail
 
-DEVICE=/dev/$(lsblk -l -o name | head -n 2 | tail -n 1)
+DEVICE=/dev/$(lsblk -l -o name | grep nvme | head -n 1)
+SWAP_SIZE=${1:-47}
 
 echo "Fetch install scripts"
 curl -o partition https://raw.githubusercontent.com/usami/nixos-setup/master/partition
@@ -15,7 +16,7 @@ chmod +x setup
 chmod +x btrfs
 chmod +x install
 
-./partition "$DEVICE" 47
+./partition "$DEVICE" "$SWAP_SIZE"
 # ./setup "$DEVICE"p1 "$DEVICE"p2 "$DEVICE"p3
 ./btrfs "$DEVICE"
 ./install
