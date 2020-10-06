@@ -47,5 +47,5 @@ in {
     hashedPassword = "$6$K6lTQoT.OXejCKr$r23AvjQurXbgj0wbkOT1UXxRkraHseJbtP3.lVmGqST3MU.fjRcQKsZfERNWj9DoMkdSwY7kBJpHLWmeilHx8.";
   };
 
-  system.stateVersion = "19.09";
+  system.stateVersion = "20.03";
 }
